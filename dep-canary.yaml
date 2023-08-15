@@ -1,14 +1,14 @@
 version: v1
 kind: kubernetes
-application: <AppName> # The name of the application to deploy.
+application: res-app # The name of the application to deploy.
 deploymentConfig:
     timeout: # Optional. Sets a timeout for rolling back deployments that do not reach a READY state. Applies to all deployments in this file. Must be equal to or greater than 1 minute
         duration: 1800
         unit: SECONDS
 targets: # Map of your deployment target, Armory CD-as-a-Service supports deploying to one target cluster.
-    <deploymentName>: # Name for your deployment. Use a descriptive value such as the environment name.
-        account: <accountName> # The name that you assigned to the deployment target cluster when you installed the RNA.
-        namespace: <namespace> # (Recommended) Set the namespace that the app gets deployed to. Overrides the namespaces that are in your manifests
+    res-dep: # Name for your deployment. Use a descriptive value such as the environment name.
+        account: staging # The name that you assigned to the deployment target cluster when you installed the RNA.
+        namespace: myc # (Recommended) Set the namespace that the app gets deployed to. Overrides the namespaces that are in your manifests
         strategy: strategy1 # A named strategy from the strategies block. This example uses the name strategy1.
         constraints:
             # A set of steps that are executed in parallel
@@ -25,10 +25,10 @@ targets: # Map of your deployment target, Armory CD-as-a-Service supports deploy
             dependsOn: []
 # The list of manifest sources. Can be a directory or file.
 manifests:
-    - path: path/to/manifests # Read all yaml|yml files in the directory and deploy all the manifests found.
+    - path: k8s-spec/ # Read all yaml|yml files in the directory and deploy all the manifests found.
       targets:
         - dev-west
-    - path: path/to/manifest.yaml # Deploy this specific manifest.
+    - path: dep-canary.yaml # Deploy this specific manifest.
       targets:
         - dev-west
 strategies: # A map of named strategies that can be assigned to deployment targets in the targets block.
@@ -45,8 +45,7 @@ strategies: # A map of named strategies that can be assigned to deployment targe
                     weight: 33
                 - exposeServices: # Expose services step type. List of the k8s service resources from deployed manifest to expose for a preview.
                     services:
-                        - your-service-01
-                        - your-service-02
+                        - res-app-svc
                     ttl: # Optional. Sets lifetime of the exposed service preview. After that period service preview automatically expires. Max lifetime cannot exceed 24 hours.
                         duration: 30
                         unit: MINUTES # SECONDS, MINUTES or HOURS
