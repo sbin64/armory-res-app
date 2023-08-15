@@ -6,31 +6,31 @@ deploymentConfig:
         duration: 1800
         unit: SECONDS
 targets: # Map of your deployment target, Armory CD-as-a-Service supports deploying to one target cluster.
-    res-dep: # Name for your deployment. Use a descriptive value such as the environment name.
-        account: staging # The name that you assigned to the deployment target cluster when you installed the RNA.
-        namespace: myc # (Recommended) Set the namespace that the app gets deployed to. Overrides the namespaces that are in your manifests
-        strategy: myCanary # A named strategy from the strategies block. This example uses the name strategy1.
-        constraints:
+  staging: # Name for your deployment. Use a descriptive value such as the environment name.
+    account: staging # The name that you assigned to the deployment target cluster when you installed the RNA.
+    namespace: myc # (Recommended) Set the namespace that the app gets deployed to. Overrides the namespaces that are in your manifests
+    strategy: myCanary # A named strategy from the strategies block. This example uses the name strategy1.
+    constraints:
             # A set of steps that are executed in parallel
-            beforeDeployment:
-                - pause: # The map key is the step type
+        beforeDeployment:
+            - pause: # The map key is the step type
                     # The duration of the pause before the deployment continues. If duration is not zero, set untilApproved to false.
-                    duration: 1
-                    unit: SECONDS
+                duration: 1
+                unit: SECONDS
                     # If set to true, the deployment waits until a manual approval to continue. Only set this to true if duration and unit are not set.
-                    untilApproved: false
+                untilApproved: false
             # A set of steps that are executed in parallel, after the deployment is run
-            afterDeployment: []
+        afterDeployment: []
             # Defines the deployments that must reach a successful state (defined as status == SUCCEEDED) before this deployment can start.Deployments with the same dependsOn criteria will execute in parallel.
-            dependsOn: []
+        dependsOn: []
 # The list of manifest sources. Can be a directory or file.
 manifests:
-    - path: k8s-spec/ # Read all yaml|yml files in the directory and deploy all the manifests found.
-      targets:
-        - dev-west
-    - path: dep-canary.yaml # Deploy this specific manifest.
-      targets:
-        - dev-west
+  - path: k8s-spec/ # Read all yaml|yml files in the directory and deploy all the manifests found.
+    targets:
+    - dev-west
+- path: dep-canary.yaml # Deploy this specific manifest.
+    targets:
+    - dev-west
 strategies: # A map of named strategies that can be assigned to deployment targets in the targets block.
     myCanary: # Name for a strategy that you use to refer to it. Used in the target block. This example uses strategy1 as the name.
         canary: # The deployment strategy type. Use canary.
