@@ -18,7 +18,7 @@ jobs:
         with:
           clientId: ${{ secrets.CDAAS_CLIENT_ID }}
           clientSecret: ${{ secrets.CDAAS_CLIENT_SECRET }}
-          path-to-file: "/dep-canary.yaml"
+          path-to-file: "/armoryDeployment.yaml"
           waitForDeployment: true
 
       - name: Print deploy output
