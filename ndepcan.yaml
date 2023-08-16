@@ -1,0 +1,72 @@
+version: v1
+kind: kubernetes
+application: res-app
+# Map of Deployment Targets
+targets:
+  # This in the name of a deployment. Underneath it is its configuration.
+  staging:
+     # the agentIdentifier of the Remote Network Agent for this target 
+    account: rn-cluster
+    # Optionally override the namespaces that are in the manifests
+    namespace: staging-ns
+    # This is the key to a strategy under the strategies map
+    strategy: rolling
+  production:
+     # the agentIdentifier of the Remote Network Agent for this target 
+    account: rn-cluster
+    # Optionally override the namespaces that are in the manifests
+    namespace: prod-ns
+    # This is the key to a strategy under the strategies map
+    strategy: mybluegreen
+    constraints:
+      dependsOn: ["staging"]
+      beforeDeployment:
+        - pause:
+            untilApproved: true
+# The list of manifests sources
+manifests:
+  # This reads all YAML files in a dir
+  # and deploys manifests in that dir to all targets.
+  - path: k8s-spec/staging
+    targets: ["staging"]
+  - path: k8s-spec/prod
+    targets: ["production"]
+# The map of strategies, a deployment target will reference one of these
+strategies:
+  # this is the name for the strategy
+  mycanary:
+    # This map key is the deployment strategy type
+    canary:
+      steps:
+        # The map key is the step type
+        - setWeight:
+            weight: 25
+        - pause:
+            duration: 10
+            unit: seconds
+        - setWeight:
+            weight: 50
+        - pause:
+            duration: 10
+            unit: seconds
+        - setWeight:
+            weight: 100
+  rolling:
+    canary:
+      steps:
+        - setWeight:
+            weight: 100
+  mybluegreen:
+    # This specifies the deployment strategy type
+    blueGreen:
+      activeService: restuarant-service
+      # List of what needs to happen before redirecting traffic
+      redirectTrafficAfter:
+        - pause:
+            duration: 10
+            unit: seconds
+      # List of what needs to happen before shutting down the old version
+      shutDownOldVersionAfter:
+        - pause:
+            duration: 20
+            unit: seconds

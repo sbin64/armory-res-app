@@ -4,12 +4,12 @@ application: res-app
 
 targets:
   staging:
-    account: staging
-    namespace: myc
+    account: rn-cluster
+    namespace: staging-ns
     strategy: myCanary
 
 manifests:
-  - path: k8s-spec
+  - path: k8s-spec/staging
 
 strategies:
   myCanary:
