@@ -38,7 +38,7 @@ git remote add upstream https://github.com/afzal442/RestuarantApp.git
 
 ```
 git pull upstream master
-git push origin master
+git push -f origin master
 ```
 
 # Building the React App locally
