@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: {{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.kind }}
+metadata:
+  name: {{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.name }}
+  labels: 
+    {{- with .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.labels }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.replicas }}
+  
+  selector:
+    matchLabels:
+     {{- with .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.labels }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- with .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.labels }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    spec:
+      {{- if .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.service_account }}
+      serviceAccountName: {{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.service_account }}
+      {{- end }}
+      {{- if .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.image_pull_secret }}
+      imagePullSecrets:
+        - name: {{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.image_pull_secret }}
+      {{- end }}
+      volumes:
+        {{- range .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.volumes }}
+        - name: {{ .name }}
+          {{- if .secret  }}
+          secret:
+            secretName: {{ .secret }}
+          {{ else if .configmap }}
+          configMap:
+            name: {{ .configmap }}
+          {{- end }}
+        {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.image }}:{{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.image_tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.image_pull_policy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.port }}
+              protocol: {{ .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.protocol }}
+          envFrom:
+            {{- range .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.env_from_secret }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
+            {{- range .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.env_from_config }}
+            - configMapRef:
+                name: {{ . }}
+            {{- end }}
+          volumeMounts:
+            {{- range .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.volume_mounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              subPath: {{ .subPath }}
+              readOnly: {{ .readOnly }}
+            {{- end }}
+          env:
+          {{- with .Values.helm_workload_f951319f18395eb4802ce7262a6407b9.env }}
+            {{- range $key, $value := . }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
