@@ -1,0 +1,52 @@
+helm_hpa_4a30af9236805f959eff187067195678:
+    enabled: true
+    max_replicas: 2
+    min_replicas: 1
+    name: armory-res-app
+    target_cpu_utilization_percentage: 50
+    target_memory_utilization_percentage: 50
+    workload_kind: Deployment
+    workload_name: armory-res-app
+helm_ingress_bff33fe855f554b6a7bc74276ce52b93:
+    annotations:
+        kubernetes.io/ingress.allow-http: "false"
+    class_name: armory-res-app
+    default_backend_name: armory-res-app
+    default_backend_port: 80
+    enabled: true
+    labels:
+        service: myapp
+    name: armory-res-app
+    rules: []
+    tls: ""
+helm_service_account_0a1567a7bcad51b798e614fe57e3f0e3:
+    annotations: {}
+    automount: false
+    labels: {}
+    name: armory-res-app
+helm_service_bb4202a556c85321a7b2cb1d6d328c2f:
+    name: armory-res-app
+    port: 80
+    protocol: TCP
+    selector_labels:
+        service: myapp
+    target_port: 80
+    type: ClusterIP
+helm_workload_f951319f18395eb4802ce7262a6407b9:
+    env: {}
+    env_from_config: []
+    env_from_secret: []
+    image: afzal442/restaurant-app
+    image_pull_policy: Always
+    image_pull_secret: null
+    image_tag: v5
+    kind: Deployment
+    labels:
+        service: myapp
+    name: armory-res-app
+    port: 80
+    protocol: TCP
+    replicas: 1
+    service_account: armory-res-app
+    volume_mounts: []
+    volumes: []

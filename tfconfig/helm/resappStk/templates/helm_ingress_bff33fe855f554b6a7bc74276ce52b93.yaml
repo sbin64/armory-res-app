@@ -1,0 +1,67 @@
+{{- if .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.enabled }}
+{{- if and .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.class_name (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.annotations "kubernetes.io/ingress.class" .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.class_name}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- with .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.labels }}
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  defaultBackend:
+    service:
+      name: {{ .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.default_backend_name }}
+      port:
+        number: {{ .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.default_backend_port }}
+  {{- if and .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.class_name (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.class_name }}
+  {{- end }}
+  
+  {{- with .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.tls }}
+  tls:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- if .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.rules }}
+  rules:
+    {{- if (kindIs "string" .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.rules) }}
+    {{ $lengh := len .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.rules | int }}
+    {{- $newRule := trunc $lengh .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.rules | nindent 4 }}
+    {{- trim $newRule }}
+    {{- else if (kindIs "slice" .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.rules)}}
+    {{- range $rule := .Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.rules }}
+    - host: {{ $rule.host }}
+      http:
+        paths:
+        {{- range $path := $rule.http.paths }}
+        - path: {{ toYaml $path.path }}
+          pathType: {{ toYaml $path.pathType }}
+          backend:
+          {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+            service:
+              name: {{ $.Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.default_backend_name }}
+              port:
+                number: {{ $.Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.default_backend_port }}
+          {{- else }}
+          serviceName: {{ $.Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.default_backend_name }}
+          servicePort: {{ $.Values.helm_ingress_bff33fe855f554b6a7bc74276ce52b93.default_backend_port }}
+          {{- end }}
+       {{- end}}
+      {{- end }}
+      {{- end }}
+  {{- end }}
+{{- end }}
