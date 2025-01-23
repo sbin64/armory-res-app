@@ -1,0 +1,9 @@
+{
+  "output": {
+    "arn": {
+      "description": "The ARN of the created ECS Task Definition.",
+      "sensitive": false,
+      "value": "${aws_ecs_task_definition.this.arn}"
+    }
+  }
+}

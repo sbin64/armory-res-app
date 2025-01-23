@@ -1,0 +1,150 @@
+{
+    "variable": {
+        "region": [
+            {
+                "description": "AWS region",
+                "type": "string",
+                "nullable": true,
+                "default": "${var.region}"
+            }
+        ],
+        "create_ingress_alb": [
+            {
+                "default": true,
+                "description": "Whether to create an ALB with ingress to the ECS service",
+                "type": "bool"
+            }
+        ],
+        "ecs_cluster_name": [
+            {
+                "description": "Name of the ECS Cluster",
+                "type": "string",
+                "default": "my-ecs-cluster"
+            }
+        ],
+        "ecs_service_desired_count": [
+            {
+                "default": 1,
+                "description": "The number of instances of the task to run on the service",
+                "type": "number"
+            }
+        ],
+        "ecs_service_name": [
+            {
+                "description": "Name of the ECS service",
+                "type": "string",
+                "default": "my-ecs-service"
+            }
+        ],
+        "ecs_task_container_cpu": [
+            {
+                "default": 256,
+                "description": "The number of cpu units used by the ECS task",
+                "type": "number"
+            }
+        ],
+        "ecs_task_container_memory": [
+            {
+                "default": 512,
+                "description": "The amount (in MiB) of memory used by the ECS task",
+                "type": "number"
+            }
+        ],
+        "ecs_task_container_name": [
+            {
+                "description": "Name of the container in the task definition",
+                "type": "string",
+                "default": "my-ecs-container"
+            }
+        ],
+        "ecs_task_container_port": [
+            {
+                "default": 80,
+                "description": "The port exposed by the container",
+                "type": "number"
+            }
+        ],
+        "environment_variables": [
+            {
+                "description": "A map of environment variables to be passed to the container",
+                "type": "map(string)",
+                "nullable": true,
+                "default": {}
+            }
+        ],
+        "ecs_task_image_url": [
+            {
+                "description": "URL of the Docker image for the task",
+                "type": "string",
+                "default": "nginx:latest"
+            }
+        ],
+        "internal_alb": [
+            {
+                "default": true,
+                "description": "Whether the ALB should be internal",
+                "type": "bool"
+            }
+        ],
+        "private_subnet_ids": [
+            {
+                "description": "A list of private subnet IDs",
+                "type": "list(string)",
+                "nullable": true
+            }
+        ],
+        "public_subnet_ids": [
+            {
+                "description": "A list of public subnet IDs",
+                "type": "list(string)",
+                "nullable": true
+            }
+        ],
+        "tags": [
+            {
+                "description": "A map of tags to add to all resources",
+                "type": "map(string)",
+                "nullable": true
+            }
+        ],
+        "task_role_arn": [
+            {
+                "description": "Task role arn for ecs",
+                "type": "string",
+                "nullable": false
+            }
+        ],
+        "network_mode": [
+            {
+                "description": "Docker networking mode to use for the containers in the task.",
+                "type": "string",
+                "default": "awsvpc",
+                "nullable": true
+            }
+        ],
+        "cpu_architecture":[
+            {
+                "description": "CPU architecture of the ECS task",
+                "type": "string",
+                "default": "X86_64",
+                "nullable": true
+            }
+        ],
+        "health_check_path": [
+            {
+                "description": "Path to use for HTTP health checks",
+                "type": "string",
+                "default": "/",
+                "nullable": true
+            }
+        ],
+        "protocol": [
+            {
+                "description": "Protocol to use for the ALB listener",
+                "type": "string",
+                "default": "HTTP",
+                "nullable": false
+            }
+        ]
+    }
+}
